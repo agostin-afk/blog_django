@@ -13,7 +13,7 @@ DATA_DIR = BASE_DIR.parent / 'data' / 'web'
 SECRET_KEY = 'django-insecure-io-kt7*y-un21d5)2e9&xaradm6y90%+a%m+g)6n0+zv*2)&ag'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.getenv("DEBUG", 0)))
+DEBUG = bool(int(os.getenv("DEBUG", 1)))
 
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv("ALLOWED_HOSTS", '').split(',')
@@ -68,12 +68,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv("DB_ENGINE", 'CHANGE-ME'),
-        'NAME': os.getenv("POSTGRES_DB", "CHANGE-ME"),
-        'USER': os.getenv("POSTGRES_USER", "CHANGE-ME"),
-        'PASSWORD': os.getenv("POSTGRES_PASSWORD", "CHANGE-ME"),
-        'HOST': os.getenv("POSTGRES_HOST", "CHANGE-ME"),
-        'PORT': os.getenv("POSTGRES_PORT", "CHANGE-ME"),
+        'ENGINE': os.getenv("DB_ENGINE",),
+        'NAME': os.getenv("POSTGRES_DB",),
+        'USER': os.getenv("POSTGRES_USER",),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD",),
+        'HOST': os.getenv("POSTGRES_HOST",),
+        'PORT': os.getenv("POSTGRES_PORT",),
     }
 }
 

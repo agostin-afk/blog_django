@@ -159,7 +159,7 @@ cython_debug/
 __pycache__
 db.sqlite3
 media
-static
+# static
 media
 
 # Backup files # 

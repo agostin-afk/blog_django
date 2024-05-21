@@ -39,6 +39,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
+    
     name = models.CharField(max_length=255)
     slug = models.SlugField(
         unique=True,
@@ -47,10 +48,12 @@ class Category(models.Model):
         null=True,
         max_length=255,
     )
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify_new(self.name)
-            return super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         return self.name
 class Page(models.Model):
@@ -73,7 +76,7 @@ class Page(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug: 
             self.slug = slugify_new(self.title)
-            return super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
     def __str__(self) -> str:
         return self.title
     

@@ -1,15 +1,10 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from blog.models import Post
+from blog.models import Post, PostManager
 
 PER_PAGE = 9
 def index(request):
-    posts = (
-            Post
-            .objects
-            .filter(is_published=True)
-            .order_by('-pk')
-            )
+    posts = Post.objects.get_is_published() # type: ignore
     paginator = Paginator(posts, PER_PAGE)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)

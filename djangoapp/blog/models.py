@@ -79,8 +79,14 @@ class Page(models.Model):
         return super().save(*args, **kwargs)
     def __str__(self) -> str:
         return self.title
-    
+
+class PostManager(models.Manager):
+    def get_is_published(self):
+        return self\
+            .filter(is_published=True)\
+            .order_by('-pk')
 class Post(models.Model):
+    objects = PostManager()
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'

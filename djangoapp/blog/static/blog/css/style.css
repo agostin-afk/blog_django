@@ -163,6 +163,10 @@ html,
   height: 100%;
 }
 
+img{
+  margin: 0 auto;
+}
+
 .blog-wrapper {
   display: flex;
   flex-direction: column;

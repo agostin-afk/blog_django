@@ -22,20 +22,22 @@ class PostListView(ListView):
     #     queryset = super().get_queryset()
     #     get_queryset = queryset.filter(is_published=True)
     #     return get_queryset
-def index(request):
-    posts = Post.objects.get_is_published() # type: ignore
-    paginator = Paginator(posts, PER_PAGE)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
+    
+    
+# def index(request):
+#     posts = Post.objects.get_is_published() # type: ignore
+#     paginator = Paginator(posts, PER_PAGE)
+#     page_number = request.GET.get("page")
+#     page_obj = paginator.get_page(page_number)
 
-    return render(
-        request,
-        'blog/pages/index.html',
-        {
-            'page_obj': page_obj,
-            'page_title': 'Home - ',
-        }
-    )
+#     return render(
+#         request,
+#         'blog/pages/index.html',
+#         {
+#             'page_obj': page_obj,
+#             'page_title': 'Home - ',
+#         }
+#     )
 
 def created_by(request, author_pk):
     user = User.objects.filter(pk=author_pk).first()

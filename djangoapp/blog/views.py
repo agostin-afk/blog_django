@@ -1,11 +1,27 @@
+from typing import Any
 from django.core.paginator import Paginator
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from blog.models import Post, PostManager, Page
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.db.models import Q
+from django.views.generic import ListView
 
 PER_PAGE = 9
+
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/pages/index.html'
+    context_object_name = 'posts'
+    ordering = '-pk',
+    paginate_by = PER_PAGE
+    queryset = Post.objects.get_is_published() # type: ignore
+    
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     get_queryset = queryset.filter(is_published=True)
+    #     return get_queryset
 def index(request):
     posts = Post.objects.get_is_published() # type: ignore
     paginator = Paginator(posts, PER_PAGE)

@@ -1,10 +1,10 @@
 from typing import Any
 from django.core.paginator import Paginator
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from blog.models import Post, PostManager, Page
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, HttpRequest
 from django.db.models import Q
 from django.views.generic import ListView
 
@@ -60,7 +60,7 @@ class CreatedByListView (PostListView):
 
 
 class CategoryListView(PostListView):
-    ...
+    
     allow_empty = False
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(
@@ -108,7 +108,7 @@ def post(request, slug):
     )
     
 class TagsListView(PostListView):
-    ...
+    
     allow_empty = False
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(
@@ -125,8 +125,35 @@ class TagsListView(PostListView):
         
         return ctx
 
+
+class SearchListView(PostListView):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._search_value = ''
+    def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
+        self._search_value = request.GET.get('search','').strip()
+        return super().setup(request, *args, **kwargs)
+    def get_queryset(self) -> QuerySet[Any]:
+        search_value = self._search_value
+        return super().get_queryset().filter(
+            Q(title__icontains = search_value) |
+            Q(excerpt__icontains = search_value) |
+            Q(content__icontains = search_value)  
+            )[0:PER_PAGE]
+    def get_context_data(self, **kwargs: Any):
+        ctx = super().get_context_data(**kwargs)
+        search_value = self._search_value
+        ctx.update({
+            'page_title': search_value + ' - ',
+            'search_value': search_value,
+        })
+        return ctx
+    def get(self, request, *args, **kwargs):
+        if self._search_value == '':
+            return redirect('blog:index')
+        return super().get(request, *args, **kwargs)
 def search(request):
-    search_value = request.GET.get('search').strip()
+    search_value = request.GET.get('search','').strip()
     posts = (
         Post.objects.get_is_published().filter( # type: ignore
             Q(title__icontains = search_value) |

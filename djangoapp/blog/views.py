@@ -107,23 +107,23 @@ def post(request, slug):
         }
     )
     
-def tags(request, slug):
-    posts = Post.objects.get_is_published().filter(tags__slug=slug) # type: ignore
-    paginator = Paginator(posts, PER_PAGE)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    if len(page_obj) == 0:
-        raise Http404()
-    page_title = f'{page_obj[0].tags.first().name} - '
-    return render(
-        request,
-        'blog/pages/index.html',
-        {
-            'page_obj': page_obj,
+class TagsListView(PostListView):
+    ...
+    allow_empty = False
+    def get_queryset(self) -> QuerySet[Any]:
+        return super().get_queryset().filter(
+            tags__slug=self.kwargs.get('slug')
+        )
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        
+        page_title = f'{self.object_list[0].tags.first().name} - ' #type: ignore
+        
+        ctx.update({
             'page_title': page_title,
-            
-        }
-    )
+        })
+        
+        return ctx
 
 def search(request):
     search_value = request.GET.get('search').strip()

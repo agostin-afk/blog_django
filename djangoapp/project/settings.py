@@ -1,10 +1,13 @@
 import os
 # from dotenv import load_dotenv
 from pathlib import Path
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATA_DIR = BASE_DIR.parent / 'data' / 'web'
+
+load_dotenv(BASE_DIR.parent / 'dotenv-files' / '.env', override=True)
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'change-me')
 
@@ -30,6 +33,9 @@ INSTALLED_APPS = [
     #meus apps
     'blog',
     'site_setup',
+    
+    #axies
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -40,6 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -95,6 +102,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
+    'axes.backends.AxesStandaloneBackend',
+
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 SUMMERNOTE_CONFIG = {
     'summernote': {
         # Toolbar customization
@@ -146,3 +161,8 @@ MEDIA_ROOT = DATA_DIR / 'media'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AXES_ENABLED = True
+AXES_FAILURE_LIMIT = 3
+AXES_COOLOFF_TIME = 1  # 1 Hora
+AXES_RESET_ON_SUCCESS = True

@@ -10,35 +10,38 @@ from django.views.generic import ListView, DetailView
 
 PER_PAGE = 9
 
+
 class PostListView(ListView):
     template_name = 'blog/pages/index.html'
     context_object_name = 'posts'
     paginate_by = PER_PAGE
-    queryset = Post.objects.get_is_published() # type: ignore
-    
+    queryset = Post.objects.get_is_published()  # type: ignore
+
     # def get_queryset(self):
     #     queryset = super().get_queryset()
     #     get_queryset = queryset.filter(is_published=True)
     #     return get_queryset
-    
- 
+
+
 class CreatedByListView (PostListView):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._temp_context: dict[str, Any] = {}
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         user = self._temp_context['user']
         user_full_name = user.username
-        
+
         if user.first_name:
             user_full_name = f'{user.first_name} {user.last_name} -' 
-        page_title= user_full_name + ' posts -'
-        
+        page_title = user_full_name + ' posts -'
+
         ctx.update({
             'page_title': page_title,
         })
         return ctx
+    
     def get_queryset(self) -> QuerySet[Any]:
         qs = super().get_queryset()
         qs = qs.filter(created_by__pk=self._temp_context['user'].pk)
@@ -60,74 +63,83 @@ class CreatedByListView (PostListView):
 
 
 class CategoryListView(PostListView):
-    
+
     allow_empty = False
+
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(
             category__slug=self.kwargs.get('slug')
         )
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
-        
+
         page_title = f'{self.object_list[0].category.name} - ' #type: ignore
-        
+
         ctx.update({
             'page_title': page_title,
         })
-        
+
         return ctx
+
+
 class PageDetailView(DetailView):
-    
+
     model = Page
     template_name = 'blog/pages/page.html'
     slug_field = 'slug'
     context_object_name = 'page'
-    
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
         page = self.get_object()
-        page_title = f'{page.title} - ' #type: ignore
+        page_title = f'{page.title} - '  # type: ignore
         ctx.update({
             'page_tutle': page_title,
         })
         return ctx
+
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(is_published=True)
 
 
 class PostDetailView(DetailView):
-    
+
     model = Post
     template_name = 'blog/pages/post.html'
     context_object_name = 'post'
-    
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
         post = self.get_object()
-        page_tutle = f'{post.title} - ' #type: ignore
+        page_tutle = f'{post.title} - '  # type: ignore
         ctx.update({
             'page_tutle': page_tutle,
         })
         return ctx
+    
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(is_published=True)
 
+
 class TagsListView(PostListView):
-    
+
     allow_empty = False
+
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset().filter(
             tags__slug=self.kwargs.get('slug')
         )
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs)
-        
-        page_title = f'{self.object_list[0].tags.first().name} - ' #type: ignore
-        
+
+        page_title = f'{self.object_list[0].tags.first().name} - '  # type: ignore
+
         ctx.update({
             'page_title': page_title,
         })
-        
+
         return ctx
 
 
@@ -135,16 +147,19 @@ class SearchListView(PostListView):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._search_value = ''
+
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         self._search_value = request.GET.get('search','').strip()
         return super().setup(request, *args, **kwargs)
+
     def get_queryset(self) -> QuerySet[Any]:
         search_value = self._search_value
         return super().get_queryset().filter(
-            Q(title__icontains = search_value) |
-            Q(excerpt__icontains = search_value) |
-            Q(content__icontains = search_value)  
+            Q(title__icontains=search_value) |
+            Q(excerpt__icontains=search_value) |
+            Q(content__icontains=search_value)
             )[0:PER_PAGE]
+
     def get_context_data(self, **kwargs: Any):
         ctx = super().get_context_data(**kwargs)
         search_value = self._search_value
@@ -153,6 +168,7 @@ class SearchListView(PostListView):
             'search_value': search_value,
         })
         return ctx
+
     def get(self, request, *args, **kwargs):
         if self._search_value == '':
             return redirect('blog:index')

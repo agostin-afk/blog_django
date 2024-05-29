@@ -27,14 +27,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'django_summernote',
-    
-    #meus apps
+
+    # meus apps
     'blog',
     'site_setup',
-    
-    #axies
+
+    # axies
     'axes',
 ]
 
@@ -71,8 +71,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 
-
-
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'change-me'),
@@ -83,8 +81,6 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT', 'change-me'),
     }
 }
-
-
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -138,7 +134,6 @@ SUMMERNOTE_CONFIG = {
 }
 
 
-
 LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'America/Sao_Paulo'
@@ -148,8 +143,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-
-
 STATIC_URL = '/static/'
 
 STATIC_ROOT = DATA_DIR / 'static'
@@ -157,7 +150,6 @@ STATIC_ROOT = DATA_DIR / 'static'
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = DATA_DIR / 'media'
-
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

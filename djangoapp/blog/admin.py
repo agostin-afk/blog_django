@@ -5,6 +5,7 @@ from django_summernote.admin import SummernoteModelAdmin
 from django.contrib import admin
 from blog.models import Tag, Category, Page, Post
 
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = 'id', 'name', 'slug',
@@ -15,6 +16,8 @@ class TagAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ('name',),
     }
+
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = 'id', 'name', 'slug'
@@ -25,6 +28,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ('name',),
     }
+
 
 @admin.register(Page)
 class PageAdmin(SummernoteModelAdmin):
@@ -37,10 +41,11 @@ class PageAdmin(SummernoteModelAdmin):
         "slug": ('title',),
     }
 
+
 @admin.register(Post)
 class PostAdmin(SummernoteModelAdmin):
     summernote_fields = ('content',)
-    list_display  = 'id', 'title', 'is_published', 'created_by'
+    list_display = 'id', 'title', 'is_published', 'created_by'
     list_display_links = 'title',
     search_fields = 'id', 'slug', 'title', 'excerpt', 'content',
     list_per_page = 50
@@ -52,17 +57,18 @@ class PostAdmin(SummernoteModelAdmin):
         "slug": ('title',),
     }
     autocomplete_fields = 'tags', 'category',
-    
+
     def link(self, obj):
         if not obj.pk: 
             return '-'
-        
+
         url_do_post = obj.get_absolute_url()
         safe_link = mark_safe(f'<a target="_blank" href= "{url_do_post}">Ver Post</a>')
         return safe_link
+
     def save_model(self, request, obj, form, change):
-        if change: 
+        if change:
             obj.updated_by = request.user
-        else: 
+        else:
             obj.created_by = request.user
         obj.save()

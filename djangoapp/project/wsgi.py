@@ -20,5 +20,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
 load_dotenv(BASE_DIR.parent / 'dotenv-files' / '.env', override=True)
 
 
-
 application = get_wsgi_application()
